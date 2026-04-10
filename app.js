@@ -338,7 +338,7 @@ document.addEventListener('submit', (e) => {
             saveSession();
             initDashboard();
         } else {
-            alert('Credenciais inválidas.');
+            // validateAccess já dá o alerta se falhar
         }
     }
 
@@ -370,6 +370,9 @@ document.addEventListener('submit', (e) => {
 
 if (currentUser) {
     initDashboard();
+} else {
+    // Garantir que a tela de auth esteja limpa
+    sessionStorage.removeItem('sge_user');
 }
 
 // Inicializar Ambiente Padrão se o DB estiver vazio (reset manual)

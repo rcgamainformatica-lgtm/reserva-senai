@@ -38,6 +38,7 @@ const updateUIByRole = () => {
     // Controle de visibilidade por perfil
     document.querySelectorAll('.admin-only').forEach(el => el.classList.toggle('hidden', !isAdmin));
     document.querySelectorAll('.gestao-only').forEach(el => el.classList.toggle('hidden', !isGestao));
+    document.querySelectorAll('.not-admin-only').forEach(el => el.classList.toggle('hidden', isAdmin));
 
     // Aplicar Layout
     document.documentElement.style.setProperty('--accent-color', db.layout.primaryColor);

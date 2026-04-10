@@ -173,11 +173,11 @@ const initDashboard = () => {
 };
 
 const validateAccess = (email, password) => {
-    const emailLower = email.toLowerCase();
+    const emailLower = email.toLowerCase().trim();
     const isAdmin = ADMIN_EMAILS.includes(emailLower);
     
     if (isAdmin) {
-        if (password === ADMIN_PASSWORD) {
+        if (password.trim() === ADMIN_PASSWORD) {
             return { name: 'Administrador', email: emailLower, role: 'Administrador' };
         } else {
             alert('Senha incorreta para Administrador.');
@@ -188,7 +188,7 @@ const validateAccess = (email, password) => {
     if (emailLower.endsWith('@sp.senai.br')) {
         // Para usuários padrão no protótipo, qualquer senha serve ou podemos validar contra db.users
         const userInDb = db.users.find(u => u.email.toLowerCase() === emailLower);
-        if (userInDb && userInDb.password !== password) {
+        if (userInDb && userInDb.password.trim() !== password.trim()) {
             alert('Senha incorreta.');
             return null;
         }
@@ -203,8 +203,15 @@ const handleSocialLogin = (provider) => {
         { id: 'email', label: 'E-mail Institucional', placeholder: 'exemplo@sp.senai.br' },
         { id: 'pass', label: 'Senha', type: 'password' }
     ], (data) => {
-        if (!data.email || !data.pass) return;
-        const user = validateAccess(data.email, data.pass);
+        const modalEmail = data.email ? data.email.trim() : '';
+        const modalPass = data.pass ? data.pass.trim() : '';
+        
+        if (!modalEmail || !modalPass) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        const user = validateAccess(modalEmail, modalPass);
         if (user) {
             currentUser = user;
             saveSession();

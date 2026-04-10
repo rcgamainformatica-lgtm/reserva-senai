@@ -258,17 +258,27 @@ const isWithinAllowedHours = (dateStr) => {
 document.addEventListener('click', (e) => {
     const target = e.target;
     
-    // Navegação
+    // Navegação e Botões de Ação do Menu
     const navLink = target.closest('#nav-links a');
-    if (navLink) { e.preventDefault(); showView(navLink.dataset.page); return; }
+    if (navLink) {
+        e.preventDefault();
+        
+        // Se for o botão de alterar senha
+        if (navLink.id === 'btn-alter-senha') {
+            alterarSenha();
+            return;
+        }
+
+        // Se for navegação de página
+        if (navLink.dataset.page) {
+            showView(navLink.dataset.page);
+            return;
+        }
+    }
 
     // Logout
     const logoutBtn = target.closest('#logout-btn');
-    if (logoutBtn) { currentUser = null; sessionStorage.removeItem('sge_user'); window.location.reload(); return; }
-
-    // Alterar Senha Btn
-    const alterSenhaBtn = target.closest('#btn-alter-senha');
-    if (alterSenhaBtn) { alterarSenha(); return; }
+    if (logoutBtn) { e.preventDefault(); currentUser = null; sessionStorage.removeItem('sge_user'); window.location.reload(); return; }
 
     // Alternar Cadastro/Login
     if (target.id === 'go-to-register') { document.getElementById('register-card').classList.remove('hidden'); document.querySelector('.auth-card:not(#register-card)').classList.add('hidden'); return; }

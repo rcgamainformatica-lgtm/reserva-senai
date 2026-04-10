@@ -198,29 +198,7 @@ const validateAccess = (email, password) => {
     return null;
 };
 
-const handleSocialLogin = (provider) => {
-    openModal(`Login com ${provider}`, [
-        { id: 'email', label: 'E-mail Institucional', placeholder: 'exemplo@sp.senai.br' },
-        { id: 'pass', label: 'Senha', type: 'password' }
-    ], (data) => {
-        const modalEmail = data.email ? data.email.trim() : '';
-        const modalPass = data.pass ? data.pass.trim() : '';
-        
-        if (!modalEmail || !modalPass) {
-            alert('Por favor, preencha todos os campos.');
-            return;
-        }
 
-        const user = validateAccess(modalEmail, modalPass);
-        if (user) {
-            currentUser = user;
-            saveSession();
-            initDashboard();
-        } else {
-            alert('Acesso negado. Verifique suas credenciais.');
-        }
-    });
-};
 
 // --- Verificação de Horários ---
 
@@ -242,9 +220,7 @@ document.addEventListener('click', (e) => {
     const logoutBtn = target.closest('#logout-btn');
     if (logoutBtn) { currentUser = null; sessionStorage.removeItem('sge_user'); window.location.reload(); return; }
 
-    // Social Login
-    if (target.id === 'btn-google') { handleSocialLogin('Google'); return; }
-    if (target.id === 'btn-microsoft') { handleSocialLogin('Microsoft'); return; }
+
 
     // Alternar Cadastro/Login
     if (target.id === 'go-to-register') { document.getElementById('register-card').classList.remove('hidden'); document.querySelector('.auth-card:not(#register-card)').classList.add('hidden'); return; }

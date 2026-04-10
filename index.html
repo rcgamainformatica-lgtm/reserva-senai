@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGE SENAI - Sistema de Gestão de Espaços</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+    <header id="main-header" class="hidden">
+        <div class="header-container">
+            <div class="logo-container">
+               <img src="https://www.sp.senai.br/images/senai-logo.png" alt="SENAI" class="header-logo" style="filter: brightness(0) invert(1);">
+            </div>
+            <nav id="main-nav">
+                <ul id="nav-links">
+                    <li><a href="#" data-page="home">Home</a></li>
+                    <li><a href="#" data-page="ambientes">Ambiente</a></li>
+                    <li><a href="#" data-page="minhas-reservas">Consultar reserva</a></li>
+                    <li class="admin-only hidden"><a href="#" data-page="layout">Layout</a></li>
+                    <li class="gestao-only hidden"><a href="#" data-page="reservas-gestao">Gestão</a></li>
+                    <li><button id="logout-btn" class="btn-secondary">Sair</button></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="app-container">
+        <!-- Auth Section -->
+        <section id="auth-section" class="view">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <img src="https://www.sp.senai.br/images/senai-logo.png" alt="SENAI" class="auth-logo" style="filter: brightness(0) invert(1);">
+                    <h1>Acesso ao Sistema</h1>
+                    <p>Entre com sua conta corporativa ou social</p>
+                </div>
+                <div class="social-auth">
+                    <button class="btn-social" id="btn-google">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" alt="Google">
+                        Entrar com Google
+                    </button>
+                    <button class="btn-social" id="btn-microsoft">
+                        <img src="https://cdn-icons-png.flaticon.com/512/732/732221.png" alt="Microsoft">
+                        Entrar com Microsoft
+                    </button>
+                </div>
+
+                <div class="divider">
+                    <span>ou acesse com e-mail</span>
+                </div>
+
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" placeholder="nome@exemplo.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Entrar</button>
+                </form>
+                
+                <div class="auth-footer">
+                    <p>Não tem uma conta? <a href="#" id="go-to-register">Cadastre-se</a></p>
+                </div>
+            </div>
+
+            <div id="register-card" class="auth-card hidden">
+                <div class="auth-header">
+                    <h1>Criar Conta</h1>
+                    <p>Cadastre-se para solicitar reservas</p>
+                </div>
+                <form id="register-form">
+                    <div class="form-group">
+                        <label for="reg-name">Nome Completo</label>
+                        <input type="text" id="reg-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-email">E-mail</label>
+                        <input type="email" id="reg-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reg-password">Senha</label>
+                        <input type="password" id="reg-password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Registrar</button>
+                </form>
+                <div class="auth-footer">
+                    <p>Já tem uma conta? <a href="#" id="go-to-login">Faça Login</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Home Section -->
+        <section id="home-view" class="view hidden">
+            <div class="hero-banner" id="home-banner">
+                <h1 id="banner-title">Sistema de Gestão de Espaços</h1>
+                <p id="banner-text">Gerencie suas reservas de forma simples e eficiente.</p>
+            </div>
+            <div class="快速-links">
+                <div class="info-card">
+                    <h3>Como funciona</h3>
+                    <p>Solicite a reserva de salas e ambientes. Sua solicitação passará por análise da nossa equipe de gestão.</p>
+                </div>
+                <div class="info-card">
+                    <h3>Horários</h3>
+                    <p>Segunda a Sexta: 08:00 - 22:00<br>Sábados: 08:00 - 18:00</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ambientes Section -->
+        <section id="ambientes-view" class="view hidden">
+            <div class="view-header">
+                <h2>Ambientes Disponíveis</h2>
+                <button class="btn-primary gestao-only hidden" id="btn-add-ambiente">+ Novo Ambiente</button>
+            </div>
+            <div class="ambientes-grid" id="ambientes-list">
+                <!-- Ambientes will be injected here -->
+            </div>
+        </section>
+
+        <!-- Layout Editor (Admin) -->
+        <section id="layout-view" class="view hidden">
+            <h2>Edição de Layout</h2>
+            <div class="layout-editor-container">
+                <form id="layout-form">
+                    <div class="form-group">
+                        <label>Cor Primária</label>
+                        <input type="color" id="primary-color-pick" value="#ffffff">
+                    </div>
+                    <div class="form-group">
+                        <label>Título do Banner</label>
+                        <input type="text" id="layout-banner-title">
+                    </div>
+                    <div class="form-group">
+                        <label>Texto do Banner</label>
+                        <textarea id="layout-banner-text"></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Salvar Alterações</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Minhas Reservas Section (User) -->
+        <section id="minhas-reservas-view" class="view hidden">
+            <h2>Minhas Solicitações</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ambiente</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="minhas-reservas-list">
+                        <!-- User's reservas will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Reservas Gestão Section -->
+        <section id="reservas-gestao-view" class="view hidden">
+            <h2>Gestão de Solicitações</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuário</th>
+                            <th>Ambiente</th>
+                            <th>Data/Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservas-list">
+                        <!-- Reservas will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Custom Modal -->
+    <div id="custom-modal" class="modal-overlay hidden">
+        <div class="modal-window">
+            <div class="modal-header">
+                <h2 id="modal-title">Título</h2>
+                <button id="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-fields">
+                <!-- Fields injected here -->
+            </div>
+            <div class="modal-footer">
+                <button id="modal-cancel-btn" class="btn-secondary">Cancelar</button>
+                <button id="modal-confirm-btn" class="btn-primary">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>

@@ -158,8 +158,8 @@ const openModal = (title, fields, onConfirm, confirmBtnText) => {
         <div class="form-group">
             <label>${f.label}</label>
             ${f.type === 'textarea' ? 
-                `<textarea id="mod-${f.id}" rows="4">${f.value || ''}</textarea>` : 
-                `<input type="${f.type || 'text'}" id="mod-${f.id}" value="${f.value || ''}" placeholder="${f.placeholder || ''}">`}
+                `<textarea id="mod-${f.id}" class="${f.className || ''}" rows="4">${f.value || ''}</textarea>` : 
+                `<input type="${f.type || 'text'}" id="mod-${f.id}" class="${f.className || ''}" value="${f.value || ''}" placeholder="${f.placeholder || ''}">`}
         </div>
     `).join('');
     
@@ -216,8 +216,8 @@ const validateAccess = (email, password) => {
 
 const alterarSenha = () => {
     openModal('Alterar Minha Senha', [
-        { id: 'atual', label: 'Digite a senha atual', type: 'password', placeholder: 'Sua senha atual' },
-        { id: 'nova', label: 'Digite a nova senha desejada', type: 'password', placeholder: 'Nova senha' }
+        { id: 'atual', label: 'Digite a senha atual', type: 'password', className: 'input-white' },
+        { id: 'nova', label: 'Digite a senha desejada', type: 'password', className: 'input-white' }
     ], (data) => {
         const passAtual = data.atual ? data.atual.trim() : '';
         const novaPass = data.nova ? data.nova.trim() : '';
@@ -243,7 +243,7 @@ const alterarSenha = () => {
             saveDB();
             alert('Sua senha foi alterada com sucesso!');
         }
-    }, 'Alterar senha');
+    }, 'Enviar');
 };
 
 // --- Verificação de Horários ---

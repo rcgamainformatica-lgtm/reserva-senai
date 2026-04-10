@@ -145,9 +145,14 @@ const renderMinhasReservas = () => {
 
 let activeModalConfirm = null;
 
-const openModal = (title, fields, onConfirm) => {
+const openModal = (title, fields, onConfirm, confirmBtnText) => {
     const modal = document.getElementById('custom-modal');
     document.getElementById('modal-title').textContent = title;
+    
+    // Atualizar texto do botão de confirmação
+    const confirmBtn = document.getElementById('modal-confirm-btn');
+    if (confirmBtn) confirmBtn.textContent = confirmBtnText || 'Confirmar';
+
     const fieldsBody = document.getElementById('modal-fields');
     fieldsBody.innerHTML = fields.map(f => `
         <div class="form-group">
@@ -211,16 +216,14 @@ const validateAccess = (email, password) => {
 
 const alterarSenha = () => {
     openModal('Alterar Minha Senha', [
-        { id: 'atual', label: 'Senha Atual', type: 'password' },
-        { id: 'nova', label: 'Nova Senha', type: 'password' },
-        { id: 'confirma', label: 'Confirmar Nova Senha', type: 'password' }
+        { id: 'atual', label: 'Digite a senha atual', type: 'password', placeholder: 'Sua senha atual' },
+        { id: 'nova', label: 'Digite a nova senha desejada', type: 'password', placeholder: 'Nova senha' }
     ], (data) => {
         const passAtual = data.atual ? data.atual.trim() : '';
         const novaPass = data.nova ? data.nova.trim() : '';
-        const confirmaPass = data.confirma ? data.confirma.trim() : '';
+        
+        if (!passAtual || !novaPass) { alert('Preencha todos os campos.'); return; }
 
-        if (!passAtual || !novaPass || !confirmaPass) { alert('Preencha todos os campos.'); return; }
-        if (novaPass !== confirmaPass) { alert('A nova senha e a confirmação não coincidem.'); return; }
 
         const emailLower = currentUser.email.toLowerCase();
         const isAdmin = ADMIN_EMAILS.includes(emailLower);
@@ -240,7 +243,7 @@ const alterarSenha = () => {
             saveDB();
             alert('Sua senha foi alterada com sucesso!');
         }
-    });
+    }, 'Alterar senha');
 };
 
 // --- Verificação de Horários ---

@@ -1,8 +1,7 @@
 // SGE SENAI - Sistema de Gestão de Espaços (Versão Local - Independente)
 
-// 1. Configurações Globais
+// 1. Configurações Globais (Administradores Fixos)
 const ADMIN_EMAILS = ['rcgamainformatica@gmail.com', 'rgama@sp.senai.br'];
-const ADMIN_PASSWORD = 'senai123'; // Senha padrão para administradores no protótipo
 
 // 2. Estado do Sistema (Persistência via LocalStorage)
 let db = JSON.parse(localStorage.getItem('sge_db')) || {
@@ -11,6 +10,9 @@ let db = JSON.parse(localStorage.getItem('sge_db')) || {
     ],
     reservas: [],
     users: [],
+    config: {
+        adminPassword: 'senai123' // Senha mutável salva no DB
+    },
     layout: {
         primaryColor: '#ffffff',
         bannerTitle: 'SGE SENAI',
@@ -59,8 +61,10 @@ const showView = (viewId) => {
     const target = document.getElementById(`${viewId}-view`);
     if (target) target.classList.remove('hidden');
     
-    document.querySelectorAll('#nav-links a').forEach(link => {
-        link.classList.toggle('active', link.dataset.page === viewId);
+    document.querySelectorAll('#nav-links a, #nav-links button').forEach(link => {
+        if (link.dataset.page) {
+            link.classList.toggle('active', link.dataset.page === viewId);
+        }
     });
 
     if (viewId === 'ambientes') renderAmbientes();
@@ -177,13 +181,13 @@ const validateAccess = (email, password) => {
     const passTrimmed = (password || '').trim();
     const isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(emailLower);
     
-    console.log('Tentativa de login:', emailLower, 'Is Admin:', isAdmin);
+    const storedAdminPass = db.config ? db.config.adminPassword : 'senai123';
 
     if (isAdmin) {
-        if (passTrimmed === ADMIN_PASSWORD) {
+        if (passTrimmed.toLowerCase() === storedAdminPass.toLowerCase()) {
             return { name: 'Administrador', email: emailLower, role: 'Administrador' };
         } else {
-            alert('Senha incorreta para a conta de Administrador.');
+            alert('Senha incorreta para Administrador.');
             return null;
         }
     }
@@ -198,7 +202,6 @@ const validateAccess = (email, password) => {
                 return null;
             }
         }
-        // Se não está no DB mas tem o domínio, entra como Usuário Padrão
         return { name: emailLower.split('@')[0], email: emailLower, role: 'Usuário Padrão' };
     }
     
@@ -206,7 +209,39 @@ const validateAccess = (email, password) => {
     return null;
 };
 
+const alterarSenha = () => {
+    openModal('Alterar Minha Senha', [
+        { id: 'atual', label: 'Senha Atual', type: 'password' },
+        { id: 'nova', label: 'Nova Senha', type: 'password' },
+        { id: 'confirma', label: 'Confirmar Nova Senha', type: 'password' }
+    ], (data) => {
+        const passAtual = data.atual ? data.atual.trim() : '';
+        const novaPass = data.nova ? data.nova.trim() : '';
+        const confirmaPass = data.confirma ? data.confirma.trim() : '';
 
+        if (!passAtual || !novaPass || !confirmaPass) { alert('Preencha todos os campos.'); return; }
+        if (novaPass !== confirmaPass) { alert('A nova senha e a confirmação não coincidem.'); return; }
+
+        const emailLower = currentUser.email.toLowerCase();
+        const isAdmin = ADMIN_EMAILS.includes(emailLower);
+
+        if (isAdmin) {
+            const currentStored = db.config ? db.config.adminPassword : 'senai123';
+            if (passAtual.toLowerCase() !== currentStored.toLowerCase()) { alert('Senha atual incorreta.'); return; }
+            if (!db.config) db.config = {};
+            db.config.adminPassword = novaPass;
+            saveDB();
+            alert('Senha de Administrador alterada com sucesso!');
+        } else {
+            const userIndex = db.users.findIndex(u => u.email.toLowerCase() === emailLower);
+            if (userIndex === -1) { alert('Erro ao localizar usuário no banco local.'); return; }
+            if (db.users[userIndex].password.trim() !== passAtual) { alert('Senha atual incorreta.'); return; }
+            db.users[userIndex].password = novaPass;
+            saveDB();
+            alert('Sua senha foi alterada com sucesso!');
+        }
+    });
+};
 
 // --- Verificação de Horários ---
 
@@ -228,7 +263,9 @@ document.addEventListener('click', (e) => {
     const logoutBtn = target.closest('#logout-btn');
     if (logoutBtn) { currentUser = null; sessionStorage.removeItem('sge_user'); window.location.reload(); return; }
 
-
+    // Alterar Senha Btn
+    const alterSenhaBtn = target.closest('#btn-alter-senha');
+    if (alterSenhaBtn) { alterarSenha(); return; }
 
     // Alternar Cadastro/Login
     if (target.id === 'go-to-register') { document.getElementById('register-card').classList.remove('hidden'); document.querySelector('.auth-card:not(#register-card)').classList.add('hidden'); return; }
@@ -328,9 +365,7 @@ document.addEventListener('submit', (e) => {
             currentUser = user;
             saveSession();
             initDashboard();
-        } else {
-            // validateAccess já dá o alerta se falhar
-        }
+        } 
     }
 
     if (t.id === 'register-form') {
@@ -338,6 +373,7 @@ document.addEventListener('submit', (e) => {
         const name = document.getElementById('reg-name').value;
         const pass = document.getElementById('reg-password').value;
         if (email.endsWith('@sp.senai.br')) {
+            if (!db.users) db.users = [];
             db.users.push({ name, email, password: pass, role: 'Usuário Padrão' });
             saveDB();
             alert('Cadastro realizado! Agora faça login com seu e-mail.');
@@ -362,11 +398,14 @@ document.addEventListener('submit', (e) => {
 if (currentUser) {
     initDashboard();
 } else {
-    // Garantir que a tela de auth esteja limpa
     sessionStorage.removeItem('sge_user');
 }
 
-// Inicializar Ambiente Padrão se o DB estiver vazio (reset manual)
+if (!db.config) {
+    db.config = { adminPassword: 'senai123' };
+    saveDB();
+}
+
 if (db.ambientes.length === 0) {
     db.ambientes = [{ id: '1', nome: 'Sala 04', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' }];
     saveDB();

@@ -2,6 +2,7 @@
 
 // 1. Configurações Globais
 const ADMIN_EMAILS = ['rcgamainformatica@gmail.com', 'rgama@sp.senai.br'];
+const ADMIN_PASSWORD = 'senai123'; // Senha padrão para administradores no protótipo
 
 // 2. Estado do Sistema (Persistência via LocalStorage)
 let db = JSON.parse(localStorage.getItem('sge_db')) || {
@@ -171,13 +172,26 @@ const initDashboard = () => {
     showView('home');
 };
 
-const validateAccess = (email) => {
+const validateAccess = (email, password) => {
     const emailLower = email.toLowerCase();
     const isAdmin = ADMIN_EMAILS.includes(emailLower);
     
-    if (isAdmin) return { name: 'Administrador', email: emailLower, role: 'Administrador' };
+    if (isAdmin) {
+        if (password === ADMIN_PASSWORD) {
+            return { name: 'Administrador', email: emailLower, role: 'Administrador' };
+        } else {
+            alert('Senha incorreta para Administrador.');
+            return null;
+        }
+    }
     
     if (emailLower.endsWith('@sp.senai.br')) {
+        // Para usuários padrão no protótipo, qualquer senha serve ou podemos validar contra db.users
+        const userInDb = db.users.find(u => u.email.toLowerCase() === emailLower);
+        if (userInDb && userInDb.password !== password) {
+            alert('Senha incorreta.');
+            return null;
+        }
         return { name: email.split('@')[0], email: emailLower, role: 'Usuário Padrão' };
     }
     
@@ -185,25 +199,25 @@ const validateAccess = (email) => {
 };
 
 const handleSocialLogin = (provider) => {
-    const email = prompt(`Para fins de simulação de login com ${provider}, digite seu e-mail:`);
-    if (!email) return;
-
-    const user = validateAccess(email);
-    if (user) {
-        currentUser = user;
-        saveSession();
-        initDashboard();
-    } else {
-        alert('Acesso negado. Utilize um e-mail @sp.senai.br ou e-mail administrativo.');
-    }
+    openModal(`Login com ${provider}`, [
+        { id: 'email', label: 'E-mail Institucional', placeholder: 'exemplo@sp.senai.br' },
+        { id: 'pass', label: 'Senha', type: 'password' }
+    ], (data) => {
+        if (!data.email || !data.pass) return;
+        const user = validateAccess(data.email, data.pass);
+        if (user) {
+            currentUser = user;
+            saveSession();
+            initDashboard();
+        } else {
+            alert('Acesso negado. Verifique suas credenciais.');
+        }
+    });
 };
 
 // --- Verificação de Horários ---
 
 const isWithinAllowedHours = (dateStr) => {
-    // Simulação simples de validação de horário conforme o texto
-    // Segunda a sexta: 08:00 - 22:00
-    // Sábados: 08:00 - 18:00
     alert('Nota: Lembre-se de reservar entre 08h-22h (Seg-Sex) ou 08h-18h (Sáb).');
     return true; 
 };
@@ -317,20 +331,24 @@ document.addEventListener('submit', (e) => {
 
     if (t.id === 'login-form') {
         const email = document.getElementById('email').value;
-        const user = validateAccess(email);
+        const pass = document.getElementById('password').value;
+        const user = validateAccess(email, pass);
         if (user) {
             currentUser = user;
             saveSession();
             initDashboard();
         } else {
-            alert('Conta não autorizada.');
+            alert('Credenciais inválidas.');
         }
     }
 
     if (t.id === 'register-form') {
         const email = document.getElementById('reg-email').value;
         const name = document.getElementById('reg-name').value;
+        const pass = document.getElementById('reg-password').value;
         if (email.endsWith('@sp.senai.br')) {
+            db.users.push({ name, email, password: pass, role: 'Usuário Padrão' });
+            saveDB();
             alert('Cadastro realizado! Agora faça login com seu e-mail.');
             document.getElementById('go-to-login').click();
         } else {

@@ -173,28 +173,36 @@ const initDashboard = () => {
 };
 
 const validateAccess = (email, password) => {
-    const emailLower = email.toLowerCase().trim();
-    const isAdmin = ADMIN_EMAILS.includes(emailLower);
+    const emailLower = (email || '').toLowerCase().trim();
+    const passTrimmed = (password || '').trim();
+    const isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(emailLower);
     
+    console.log('Tentativa de login:', emailLower, 'Is Admin:', isAdmin);
+
     if (isAdmin) {
-        if (password.trim() === ADMIN_PASSWORD) {
+        if (passTrimmed === ADMIN_PASSWORD) {
             return { name: 'Administrador', email: emailLower, role: 'Administrador' };
         } else {
-            alert('Senha incorreta para Administrador.');
+            alert('Senha incorreta para a conta de Administrador.');
             return null;
         }
     }
     
     if (emailLower.endsWith('@sp.senai.br')) {
-        // Para usuários padrão no protótipo, qualquer senha serve ou podemos validar contra db.users
-        const userInDb = db.users.find(u => u.email.toLowerCase() === emailLower);
-        if (userInDb && userInDb.password.trim() !== password.trim()) {
-            alert('Senha incorreta.');
-            return null;
+        const userInDb = db.users.find(u => u.email.toLowerCase().trim() === emailLower);
+        if (userInDb) {
+            if (userInDb.password.trim() === passTrimmed) {
+                return { name: userInDb.name, email: emailLower, role: userInDb.role };
+            } else {
+                alert('Senha incorreta.');
+                return null;
+            }
         }
-        return { name: email.split('@')[0], email: emailLower, role: 'Usuário Padrão' };
+        // Se não está no DB mas tem o domínio, entra como Usuário Padrão
+        return { name: emailLower.split('@')[0], email: emailLower, role: 'Usuário Padrão' };
     }
     
+    alert('E-mail não autorizado ou senha inválida.');
     return null;
 };
 

@@ -98,7 +98,8 @@ const renderAmbientes = () => {
                 </div>
                 <div class="card-actions">
                     ${isGestao ? 
-                        `<button class="btn-secondary" data-action="edit-recursos" data-id="${amb.id}">Editar Recursos</button>` : 
+                        `<button class="btn-sm secondary" data-action="edit-ambiente" data-id="${amb.id}">Editar</button>
+                         <button class="btn-sm danger" data-action="remove-ambiente" data-id="${amb.id}">Remover</button>` : 
                         `<button class="btn-primary" data-action="solicitar-reserva" data-id="${amb.id}">Solicitar Reserva</button>`
                     }
                 </div>
@@ -325,16 +326,32 @@ document.addEventListener('click', (e) => {
         const action = actionBtn.dataset.action;
         const id = actionBtn.dataset.id;
 
-        if (action === 'edit-recursos') {
+        if (action === 'edit-ambiente') {
             const amb = db.ambientes.find(a => a.id === id);
-            openModal('Editar Recursos Didáticos', [
+            openModal('Editar Ambiente', [
+                { id: 'nome', label: 'Nome do Ambiente', value: amb.nome },
+                { id: 'cap', label: 'Capacidade (Lugares)', type: 'number', value: amb.capacidade },
                 { id: 'recursos', label: 'Recursos Didáticos', type: 'textarea', value: amb.recursos }
             ], (data) => {
                 const index = db.ambientes.findIndex(a => a.id === id);
-                db.ambientes[index].recursos = data.recursos;
+                db.ambientes[index] = {
+                    ...db.ambientes[index],
+                    nome: data.nome,
+                    capacidade: parseInt(data.cap),
+                    recursos: data.recursos
+                };
                 saveDB();
                 renderAmbientes();
+                alert('Ambiente atualizado com sucesso!');
             });
+        }
+
+        if (action === 'remove-ambiente') {
+            if (confirm('Tem certeza que deseja remover este ambiente permanentemente?')) {
+                db.ambientes = db.ambientes.filter(a => a.id !== id);
+                saveDB();
+                renderAmbientes();
+            }
         }
 
         if (action === 'solicitar-reserva') {

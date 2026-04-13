@@ -11,7 +11,7 @@ let db = JSON.parse(localStorage.getItem('sge_db')) || {
     reservas: [],
     users: [],
     config: {
-        adminPassword: 'senai123' // Senha mutável salva no DB
+        adminPassword: 'L0r&n@02' // Senha mutável salva no DB
     },
     layout: {
         primaryColor: '#ffffff',
@@ -188,7 +188,7 @@ const validateAccess = (email, password) => {
     const passTrimmed = (password || '').trim();
     const isAdmin = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(emailLower);
     
-    const storedAdminPass = db.config ? db.config.adminPassword : 'senai123';
+    const storedAdminPass = db.config ? db.config.adminPassword : 'L0r&n@02';
 
     if (isAdmin) {
         if (passTrimmed.toLowerCase() === storedAdminPass.toLowerCase()) {
@@ -231,7 +231,7 @@ const alterarSenha = () => {
         const isAdmin = ADMIN_EMAILS.includes(emailLower);
 
         if (isAdmin) {
-            const currentStored = db.config ? db.config.adminPassword : 'senai123';
+            const currentStored = db.config ? db.config.adminPassword : 'L0r&n@02';
             if (passAtual.toLowerCase() !== currentStored.toLowerCase()) { alert('Senha atual incorreta.'); return; }
             if (!db.config) db.config = {};
             db.config.adminPassword = novaPass;
@@ -433,7 +433,10 @@ if (currentUser) {
 }
 
 if (!db.config) {
-    db.config = { adminPassword: 'senai123' };
+    db.config = { adminPassword: 'L0r&n@02' };
+    saveDB();
+} else if (db.config.adminPassword === 'senai123') {
+    db.config.adminPassword = 'L0r&n@02';
     saveDB();
 }
 

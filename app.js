@@ -3,11 +3,52 @@
 // 1. Configurações Globais (Administradores Fixos)
 const ADMIN_EMAILS = ['rcgamainformatica@gmail.com', 'rgama@sp.senai.br'];
 
+const DEFAULT_AMBIENTES = [
+    { id: '1', nome: 'Sala 04', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '2', nome: 'Biblioteca - Informática', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '3', nome: 'Biblioteca - Jogos', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '4', nome: 'Biblioteca - Música', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '5', nome: 'Biblioteca - Lousa de vidro, mesas e cadeiras', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '6', nome: 'Sala 02', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '7', nome: 'Sala 25', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '8', nome: 'Sala 26', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '9', nome: 'Sala 27', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '10', nome: 'Sala 28', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '11', nome: 'Sala 29', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '12', nome: 'Sala 30', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '13', nome: 'Sala 32', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '14', nome: 'Sala 33', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '15', nome: 'Sala 34', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '16', nome: 'Sala de aula - Oficina de Elétrica', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '17', nome: 'Oficina de elétrica - Montagem de quadro', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '18', nome: 'Oficina de elétrica - Montagem de painéis', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '19', nome: 'Oficina de Refrigeração Industrial', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '20', nome: 'Sala 50', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '21', nome: 'Oficina de refrigeração Comercial', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '22', nome: 'Climatização 1 - Split', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '23', nome: 'Climatização 2 - VRF', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '24', nome: 'Climatização 3 - Ventilação', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '25', nome: 'Olimpíadas', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '26', nome: 'Sala 52', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '27', nome: 'Sala 57', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '28', nome: 'Bloco C Inferior - Brasagem 1', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '29', nome: 'Bloco C Inferior - Brasagem 2', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '30', nome: 'Bloco C Inferior - Split', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '31', nome: 'Bloco C Inferior - Split 1', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '32', nome: 'Bloco C Inferior - Câmara Frigorífica', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '33', nome: 'Sala 88', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '34', nome: 'Sala 89', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '35', nome: 'Sala 90', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '36', nome: 'Sala 94', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '37', nome: 'Oficina Eletrolux', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '38', nome: 'Oficina Midea', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '39', nome: 'Oficina Samsung', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' },
+    { id: '40', nome: 'Oficina Brastemp / Consul', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' }
+];
+
 // 2. Estado do Sistema (Persistência via LocalStorage)
 let db = JSON.parse(localStorage.getItem('sge_db')) || {
-    ambientes: [
-        { id: '1', nome: 'Sala 04', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' }
-    ],
+    ambientes: [...DEFAULT_AMBIENTES],
     reservas: [],
     users: [],
     config: {
@@ -81,7 +122,7 @@ const renderAmbientes = () => {
     const isAdmin = ADMIN_EMAILS.includes(emailLower);
     const isGestao = currentUser.role === 'Gestão' || isAdmin;
 
-    list.innerHTML = db.ambientes.map(amb => `
+    list.innerHTML = (db.ambientes || []).map(amb => `
         <div class="ambiente-card">
             <div class="ambiente-img">
                 <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1">
@@ -90,8 +131,8 @@ const renderAmbientes = () => {
                 </svg>
             </div>
             <div class="ambiente-info">
-                <h3>${amb.nome}</h3>
-                <p>${amb.capacidade} Lugares</p>
+                <h3>${amb.nome || 'Sem Nome'}</h3>
+                <p>${amb.capacidade || 0} Lugares</p>
                 <div class="recursos-container">
                     <span class="recursos-label">Recursos Didáticos</span>
                     <div class="recursos-text" id="recursos-${amb.id}">${amb.recursos || 'Aguardando cadastro...'}</div>
@@ -440,7 +481,20 @@ if (!db.config) {
     saveDB();
 }
 
-if (db.ambientes.length === 0) {
-    db.ambientes = [{ id: '1', nome: 'Sala 04', capacidade: 40, recursos: 'Projetor, 40 cadeiras, Wi-Fi, Lousa digital.' }];
+if (!db.ambientes || !Array.isArray(db.ambientes) || db.ambientes.length === 0) {
+    db.ambientes = [...DEFAULT_AMBIENTES];
     saveDB();
+} else {
+    // Mesclar os novos ambientes caso o usuário já tenha o db criado com a versão antiga
+    let addedNewRooms = false;
+    DEFAULT_AMBIENTES.forEach(defaultAmbiente => {
+        if (!db.ambientes.find(a => a.nome && a.nome === defaultAmbiente.nome)) {
+            db.ambientes.push({...defaultAmbiente});
+            addedNewRooms = true;
+        }
+    });
+
+    if (addedNewRooms) {
+        saveDB();
+    }
 }
